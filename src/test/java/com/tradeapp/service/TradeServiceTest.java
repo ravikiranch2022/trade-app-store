@@ -6,16 +6,13 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.tradeapp.bean.Trade;
 import com.tradeapp.dao.TradeDao;
 import com.tradeapp.dto.TradeDTO;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class TradeServiceTest {
 	
