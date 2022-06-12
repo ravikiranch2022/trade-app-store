@@ -35,26 +35,27 @@ public class TradeServiceImpl implements TradeService {
 	@Override
 	public void addTrade(TradeDTO tradeDTO) {
 		log.debug("processing trade with tradeId: {}", tradeDTO.getTradeId());
-
-		// Ignore if maturityDate is older than today's date
-		if (DateUtil.isOldMaturityDate(tradeDTO.getMaturityDate())) {
-			throw new TradeException("Maturity date should be less than today date. ");
-		}
-
-		Optional<Trade> existingTrade = tradeDao.findById(tradeDTO.getTradeId());
-		if (existingTrade.isPresent()) { // If there is an existing trade
-
-			// Ignore and throw exception if version is older than existing version
-			if (tradeDTO.getVersion() < existingTrade.get().getVersion()) {
-				log.info("Ignoring trade since version received is older than existing version. {}", tradeDTO);
-				throw new TradeException(
-						"Version received is lower than the existing version for tradeId: " + tradeDTO.getTradeId());
+		try {
+			// Ignore if maturityDate is older than today's date
+			if (DateUtil.isOldMaturityDate(tradeDTO.getMaturityDate())) {
+				throw new TradeException("Maturity date should be less than today date. ");
 			}
-
-			save(tradeDTO);
-		} else { // If it is a new trade
-			save(tradeDTO);
+			Optional<Trade> existingTrade = tradeDao.findById(tradeDTO.getTradeId());
+			if (existingTrade.isPresent()) { // If there is an existing trade
+				// Ignore and throw exception if version is older than existing version
+				if (tradeDTO.getVersion() < existingTrade.get().getVersion()) {
+					log.info("Ignoring trade since version received is older than existing version. {}", tradeDTO);
+					throw new TradeException(
+							"Version received is lower than the existing version for tradeId: " + tradeDTO.getTradeId());
+				}
+				save(tradeDTO);
+			} else { // If it is a new trade
+				save(tradeDTO);
+			}
+		}catch(Exception e) {
+			throw new TradeException("Invalid trade format exception: "+e.getMessage());
 		}
+		
 	}
 	 
 	private Trade save(TradeDTO tradeDTO) {
